@@ -28,7 +28,7 @@ const riveInstance = new rive.Rive({
   canvas: document.getElementById("rive-canvas"),
   autoBind: true,
   autoplay: true,
-  fit: rive.Fit.cover,           // <- This is the key part
+  fit: rive.Fit.contain,           // <- This is the key part
   alignment: rive.Alignment.center, // <- Optional but recommended
 
   onLoad() {
