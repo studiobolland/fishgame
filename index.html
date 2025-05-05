@@ -31,7 +31,7 @@
       canvas: canvas,
       autoBind: true,
       autoplay: true,
-      fit: rive.Fit.contain,
+      fit: rive.Fit.fill,  // <- Stretch artboard to fill canvas
       alignment: rive.Alignment.center,
 
       onLoad() {
@@ -40,12 +40,14 @@
     });
 
     function resizeCanvas() {
+      // Update canvas resolution (DPR-aware)
       canvas.width = canvas.clientWidth * window.devicePixelRatio;
       canvas.height = canvas.clientHeight * window.devicePixelRatio;
-      riveInstance.resizeDrawingSurfaceToCanvas();
+
+      // Resize artboard layout bounds to canvas
+      riveInstance.resizeToCanvas();
     }
 
-    // Resize on load and on window resize
     window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.matchMedia(`(resolution:${window.devicePixelRatio}dppx)`)
