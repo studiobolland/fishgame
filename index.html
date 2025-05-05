@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Rive – A Fishing Game</title>
+  <title>Rive – Responsive Fishing Game</title>
 
   <style>
-    html, body { height: 100%; margin: 0; }
-    #rive-canvas {
-      position: absolute;
-      inset: 0;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #252525;
+    }
+    canvas {
+      display: block;
       width: 100%;
       height: 100%;
-      background-color: #252525;
-      display: block;
     }
   </style>
 
@@ -25,30 +28,30 @@
     const canvas = document.getElementById("rive-canvas");
 
     const riveInstance = new rive.Rive({
-      src: "fishingbar4.riv",
-      artboard: "Dashboard",
-      stateMachines: "State Machine 1",
+      src: "fishingbar4.riv", // Update with your correct path
+      artboard: "Dashboard",  // Update if different
+      stateMachines: "State Machine 1", // Update if needed
       canvas: canvas,
-      autoBind: true,
       autoplay: true,
-      fit: rive.Fit.fill,  // <- Stretch artboard to fill canvas
-      alignment: rive.Alignment.center,
+      autoBind: true,
 
-      onLoad() {
+      fit: rive.Fit.layout,             // Critical: match canvas
+      alignment: rive.Alignment.center, // Optional, usually fine
+
+      onLoad: () => {
         resizeCanvas();
       }
     });
 
     function resizeCanvas() {
-      // Update canvas resolution (DPR-aware)
+      // Adjust canvas resolution for high-DPI screens
       canvas.width = canvas.clientWidth * window.devicePixelRatio;
       canvas.height = canvas.clientHeight * window.devicePixelRatio;
 
-      // Resize artboard layout bounds to canvas
-      riveInstance.resizeToCanvas();
+      // Resize Rive layout bounds to canvas
+      riveInstance.resizeDrawingSurfaceToCanvas();
     }
 
-    window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.matchMedia(`(resolution:${window.devicePixelRatio}dppx)`)
           .addEventListener('change', resizeCanvas);
