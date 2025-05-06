@@ -1,57 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fishing Bar Rive Demo</title>
+  <meta charset="utf-8" />
+  <title>Rive – Responsive Fishing Game</title>
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       height: 100%;
-      width: 100%;
-      background-color: #000; /* Optional: black background */
+      overflow: hidden;
+      background-color: #252525;
     }
     canvas {
       display: block;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
     }
   </style>
+
+  <script src="https://unpkg.com/@rive-app/canvas@2.9.1"></script>
 </head>
 <body>
-  <canvas id="riveCanvas"></canvas>
+  <canvas id="rive-canvas"></canvas>
 
-  <!-- Load Rive Web Runtime -->
-  <script src="https://unpkg.com/@rive-app/canvas@2.9.1"></script>
   <script>
-    const canvas = document.getElementById('riveCanvas');
+    const canvas = document.getElementById("rive-canvas");
 
     const riveInstance = new rive.Rive({
-      src: 'fishingbar4.riv',
+      src: "fishingbar4.riv", // Ensure this file is in the same directory
+      artboard: "Dashboard",
+      stateMachines: ["State Machine 1"], // <-- Corrected to an array
       canvas: canvas,
       autoplay: true,
-      artboard: 'Dashboard',
-      stateMachines: ['State Machine 1'],
-      fit: rive.Fit.COVER,
-      layout: new rive.Layout({
-        fit: rive.Fit.COVER,
-        alignment: rive.Alignment.CENTER,
-      }),
+      autoBind: true,
+      fit: rive.Fit.COVER,               // <-- Use COVER or CONTAIN, not layout
+      alignment: rive.Alignment.CENTER,  // Optional, centers the artboard
       onLoad: () => {
-        console.log('Rive file loaded');
+        resizeCanvas();
       }
     });
 
-    // Handle resizing
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Adjust canvas resolution for high-DPI screens
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+      // Resize Rive's drawing surface
+      riveInstance.resizeDrawingSurfaceToCanvas();
     }
 
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Initial sizing
+    window.matchMedia(`(resolution:${window.devicePixelRatio}dppx)`)
+          .addEventListener('change', resizeCanvas);
   </script>
 </body>
 </html>
