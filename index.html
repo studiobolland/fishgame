@@ -19,7 +19,7 @@
     }
   </style>
 
-  <script src="https://unpkg.com/@rive-app/canvas@2.9.1"></script>
+  <script src="https://unpkg.com/@rive-app/canvas"></script>
 </head>
 <body>
   <canvas id="rive-canvas"></canvas>
@@ -28,14 +28,16 @@
     const canvas = document.getElementById("rive-canvas");
 
     const riveInstance = new rive.Rive({
-      src: "fishingbar4.riv", // Ensure this file is in the same directory
-      artboard: "Dashboard",
-      stateMachines: ["State Machine 1"], // <-- Corrected to an array
+      src: "fishingbar4.riv", // Update with your correct path
+      artboard: "Dashboard",  // Update if different
+      stateMachines: "State Machine 1", // Update if needed
       canvas: canvas,
       autoplay: true,
       autoBind: true,
-      fit: rive.Fit.COVER,               // <-- Use COVER or CONTAIN, not layout
-      alignment: rive.Alignment.CENTER,  // Optional, centers the artboard
+
+      fit: rive.Fit.layout,             // Critical: match canvas
+      alignment: rive.Alignment.center, // Optional, usually fine
+
       onLoad: () => {
         resizeCanvas();
       }
@@ -46,7 +48,7 @@
       canvas.width = canvas.clientWidth * window.devicePixelRatio;
       canvas.height = canvas.clientHeight * window.devicePixelRatio;
 
-      // Resize Rive's drawing surface
+      // Resize Rive layout bounds to canvas
       riveInstance.resizeDrawingSurfaceToCanvas();
     }
 
