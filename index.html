@@ -1,60 +1,56 @@
+<!--  Rive full-bleed, flicker-free resize – Bee Game / Dashboard artboard  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Rive – Responsive Fishing Game</title>
+  <title>Rive – A Fishing Game</title>
 
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background-color: #252525;
-    }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
+    html, body { height: 100%; margin: 0; }
+    #rive-canvas{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      background-color:#252525;
     }
   </style>
 
   <script src="https://unpkg.com/@rive-app/canvas"></script>
 </head>
+
 <body>
   <canvas id="rive-canvas"></canvas>
 
   <script>
-    const canvas = document.getElementById("rive-canvas");
-
+    /* ─── basic Rive set-up ─── */
     const riveInstance = new rive.Rive({
-      src: "fishingbar4.riv", // Update with your correct path
-      artboard: "Dashboard",  // Update if different
-      stateMachines: "State Machine 1", // Update if needed
-      canvas: canvas,
-      autoplay: true,
+      src: "fishingbar4.riv",                 // your 1920 × 1080 file
+      artboard: "Dashboard",              // <-- specific artboard
+      stateMachines: "State Machine 1",   // <-- specific state machine
+      canvas: document.getElementById("rive-canvas"),
       autoBind: true,
+      autoplay: true,
 
-      fit: rive.Fit.layout,             // Critical: match canvas
-      alignment: rive.Alignment.center, // Optional, usually fine
-
-      onLoad: () => {
-        resizeCanvas();
+      onLoad() {
+        let boundInstance = rive.viewModelInstance;
+        riveInstance.resizeDrawingSurfaceToCanvas();
       }
     });
 
-    function resizeCanvas() {
-      // Adjust canvas resolution for high-DPI screens
-      canvas.width = canvas.clientWidth * window.devicePixelRatio;
-      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+    /* ─── resize & DPR handling ─── */
+    const DELAY_MS = 1;
+    let timerId = null;
 
-      // Resize Rive layout bounds to canvas
-      riveInstance.resizeDrawingSurfaceToCanvas();
+    function scheduleResize() {
+      if (document.hidden) return;
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        riveInstance.resizeDrawingSurfaceToCanvas();
+      }, DELAY_MS);
     }
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', scheduleResize);
     window.matchMedia(`(resolution:${window.devicePixelRatio}dppx)`)
-          .addEventListener('change', resizeCanvas);
+          .addEventListener('change', scheduleResize);
   </script>
 </body>
 </html>
