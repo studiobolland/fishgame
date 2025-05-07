@@ -1,56 +1,72 @@
-<!--  Rive full-bleed, flicker-free resize – Fish Game / Dashboard artboard  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Rive – Fishing Game</title>
-
-  <style>
-    html, body { height: 100%; margin: 0; }
-    #rive-canvas{
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      background-color:#252525;
-    }
-  </style>
-
-  <script src="https://unpkg.com/@rive-app/canvas"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Rive Animation</title>
+<style>
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+</style>
 </head>
 
+
 <body>
-  <canvas id="rive-canvas"></canvas>
 
-  <script>
-    /* ─── basic Rive set-up ─── */
+  <canvas
+  style="
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+  "
+  id="rive-canvas"
+></canvas>
+
+
+<script src="https://unpkg.com/@rive-app/webgl2"></script>
+<script>
+// The layout of the graphic will adhere to
+    const layout = new rive.Layout({
+      fit: rive.Fit.Layout,
+      layoutScaleFactor: 1, // when using `Fit.Layout`. This allows you to resize the layout as needed.
+    });
+
+    // ---------------------------------
+    // HTML Canvas element to render to
+    const riveCanvas = document.getElementById("rive-canvas");
+
+    function computeSize() {
+      riveInstance.resizeDrawingSurfaceToCanvas();
+    }
+
+    // Subscribe to window size changes and update call `resizeDrawingSurfaceToCanvas`
+    window.onresize = computeSize;
+
+    // Subscribe to devicePixelRatio changes and call `resizeDrawingSurfaceToCanvas`
+    window
+      .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+      .addEventListener("change", computeSize);
+
+
     const riveInstance = new rive.Rive({
-      src: "fishingbar6.riv",                 // your 1920 × 1080 file
-      artboard: "Dashboard",              // <-- specific artboard
-      stateMachines: "State Machine 1",   // <-- specific state machine
-      canvas: document.getElementById("rive-canvas"),
-      autoBind: true,
+      src: "fishingbar.riv",
+      // Be sure to specify the correct state machine (or animation) name
+      stateMachines: "State Machine 1", // Name of the State Machine to play
+      canvas: riveCanvas,
+      artboard: "Dashboard",
+      layout: layout, // This is optional. Provides additional layout control.
       autoplay: true,
-
-      onLoad() {
-        let boundInstance = rive.viewModelInstance;
+      autoBind: true,
+      onLoad: () => {
+        // Prevent a blurry canvas by using the device pixel ratio
         riveInstance.resizeDrawingSurfaceToCanvas();
       },
     });
 
-    /* ─── resize & DPR handling ─── */
-    const DELAY_MS = 1;
-    let timerId = null;
-
-    function scheduleResize() {
-      if (document.hidden) return;
-      clearTimeout(timerId);
-      timerId = setTimeout(() => {
-        riveInstance.resizeDrawingSurfaceToCanvas();
-      }, DELAY_MS);
-    }
-
-    window.addEventListener('resize', scheduleResize);
-    window.matchMedia(`(resolution:${window.devicePixelRatio}dppx)`)
-          .addEventListener('change', scheduleResize);
-  </script>
+</script>
 </body>
 </html>
